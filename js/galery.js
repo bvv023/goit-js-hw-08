@@ -65,52 +65,54 @@ const images = [
 ];
 
 
-const container = document.querySelector(".gallery");
+const gallery = document.querySelector(".gallery");
 
-container.insertAdjacentHTML("beforeend", createMarkup(images));
-container.addEventListener("click", handleProductClick);
-let instance = null;
+const galleryMarkup = images.map(
+  (image) => `
+    <li class="gallery-item">
+      <a class="gallery-link" href="${image.preview}">
+        <img
+          class="gallery-image"
+          src="${image.preview}"
+          alt="${image.description}"
+          data-source="${image.original}"
+        />
+      </a>
+    </li>
+  `
+).join("");
 
-function createMarkup(arr) {
-  return arr
-    .map((images) => `
-      <li class="gallery-item">
-      <a class="gallery-link" href="${images.preview}" >
-       <img
-      class="gallery-image"
-      src="${images.preview}"
-      data-source="${images.original}"
-      alt="${images.description}"
-    />
-  </a>
-</li>
-    `).join("");
-}
+gallery.insertAdjacentHTML("beforeend", galleryMarkup);
+
+gallery.addEventListener("click", handleProductClick);
+
+let lightboxInstance = null;
 
 function handleProductClick(event) {
-    event.preventDefault();
-  if(event.target === event.currentTarget) {
-    return;
-}
-    
-const currentProduct = event.target;
-const imageLink = currentProduct.dataset.source;
-const currentAttrubute = currentProduct.getAttribute('alt');
-  
-instance = basicLightbox.create(`
+  event.preventDefault();
+
+  if (event.target === event.currentTarget) return;
+
+  const clickedElement = event.target;
+  const imageSource = clickedElement.dataset.source;
+  const imageDescription = clickedElement.getAttribute("alt");
+
+  if (!imageSource) return;
+
+  lightboxInstance = basicLightbox.create(`
     <div class="modal">
-        <img src="${imageLink}" alt="${currentAttrubute}"
+      <img src="${imageSource}" alt="${imageDescription}" />
     </div>
   `);
 
-instance.show();
-  document.addEventListener('keydown', closeModal);
+  lightboxInstance.show();
+
+  document.addEventListener("keydown", closeModal);
 }
 
 function closeModal(event) {
-  if (event.key === 'Escape') {
-    instance.close();
-    document.removeEventListener('keydown', closeModal);
+  if (event.key === "Escape") {
+    lightboxInstance.close();
+    document.removeEventListener("keydown", closeModal);
   }
 }
- 
