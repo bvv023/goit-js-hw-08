@@ -91,7 +91,7 @@ let lightboxInstance = null;
 function handleProductClick(event) {
   event.preventDefault();
 
-  if (event.target === event.currentTarget) return;
+  if (event.target.nodeName !== "IMG") return;
 
   const clickedElement = event.target;
   const imageSource = clickedElement.dataset.source;
